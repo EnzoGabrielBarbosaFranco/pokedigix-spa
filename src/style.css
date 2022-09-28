@@ -1,0 +1,25 @@
+body {
+	background: #EFEFBB;
+	background: linear-gradient(to right, rgb(150, 207, 218), rgb(228, 182, 220));
+	color: white;
+	margin: 0;
+	font-family: rubik;
+}
+.card-image {
+	height: 180px;
+	position: relative;
+	z-index: 2;
+}
+.card-title {
+	margin-bottom: 4px;
+	font-weight: normal;
+	position: sticky;
+	z-index: 2;
+}
+.container-lista{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+img{
+	color: white;
+}
