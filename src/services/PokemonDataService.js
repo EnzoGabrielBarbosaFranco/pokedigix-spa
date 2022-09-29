@@ -7,7 +7,7 @@ class PokemonDataService {
     }
 
     async buscarPeloId(id) {
-        let resposta = await http.get('/pokemons/${id}');
+        let resposta = await http.get('/pokemons/' + id);
         return resposta.data;
     }
 
@@ -17,25 +17,25 @@ class PokemonDataService {
     }
 
     async atualizar(id, pokemon) {
-        let resposta = await http.put('/pokemons/${id}', pokemon);
+        let resposta = await http.put('/pokemons/' + id, pokemon);
         return resposta.data;
     }
 
     async remover(id, pokemon) {
-        await http.delete('/pokemons/${id}', pokemon);
+        await http.delete('/pokemons/' + id, pokemon);
     }
 
     async removerPeloNome(nome) {
-        http.delete('/pokemons?termo=${nome}');
+        http.delete('/pokemons?termo=' + nome);
     }
 
     async buscarPeloNome(nome) {
-        let resposta = await http.put('/pokemons?termo=${nome}');
+        let resposta = await http.put('/pokemons?termo=' + nome);
         return resposta.data;
     }
 
     async buscarPeloIdDoTipo(id) {
-        let resposta = await http.get('/pokemons/${id}');
+        let resposta = await http.get('/pokemons/' + id);
         return resposta.data;
     }
 }

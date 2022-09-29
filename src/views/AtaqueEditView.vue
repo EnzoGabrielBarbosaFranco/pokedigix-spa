@@ -4,7 +4,7 @@ import AtaqueRequest from '../models/AtaqueRequest';
 import AtaqueResponse from '../models/AtaqueResponse';
 import TipoDataService from '../services/TipoDataService';
 export default {
-    name: 'ataques-novo',
+    name: 'ataques-edit',
     data() {
         return {
             ataqueRequest: new AtaqueRequest(),
@@ -36,28 +36,21 @@ export default {
             TipoDataService.buscarTodos()
                 .then(resposta => {
                     this.tipos = resposta;
-                    this.ataqueRequest.tipoId = this.tipos[0].id;
                 })
                 .catch(erro => {
                     console.log(erro);
                 });
         },
         salvar() {
-            AtaqueDataService.criar(this.ataqueRequest)
+            AtaqueDataService.atualizar(this.$route.params.id, this.ataqueRequest)
                 .then(resposta => {
                     this.ataqueResponse = resposta;
                     this.salvo = true;
                 })
                 .catch(erro => {
                     console.log(erro);
+                    this.salvo = false;
                 });
-        },
-        novo() {
-            this.salvo = false;
-            this.desabilitarForca = false;
-            this.ataqueRequest = new AtaqueRequest();
-            this.ataqueRequest.categoria = this.categorias[1].nomeBanco;
-            this.ataqueResponse = new AtaqueResponse();
         },
         escolherCategoria() {
             if (this.ataqueRequest.categoria == "EFEITO") {
@@ -65,15 +58,28 @@ export default {
             } else {
                 this.desabilitarForca = false;
             }
+        },
+        carregarAtaque(id) {
+            AtaqueDataService.buscarPeloId(id)
+                .then(resposta => {
+                    this.ataqueRequest = resposta;
+                    this.ataqueRequest.tipoId = resposta.tipo.id;
+                })
+                .catch(erro => {
+                    console.log(erro);
+                });
+        },
+        voltar() {
+            this.$router.push({ name: 'ataques-lista' });
         }
     },
     mounted() {
         this.carregarTipos();
-        this.novo();
+        this.carregarAtaque(this.$route.params.id);
     },
 }
 </script>
-
+    
 <template>
     <div v-if="!salvo">
         <form class="row g-3">
@@ -133,7 +139,25 @@ export default {
         <div class="row">
             <h4>Salvo com Sucesso!</h4>
             <span> O id do ataque cadastrado é: {{ataqueResponse.id}} </span>
-            <button @click="novo" class="btn btn-primary">Cadastrar novo ataque</button>
+            <button @click="voltar" class="btn btn-primary">Voltar</button>
+        </div>
+    </div>
+
+    <div class="modal-dialog modal-dialog-centered" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Apagar ataque</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Você está prestes a apagar um ataque, tem certeza que deseja fazer isso?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Apagar Ataque</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
