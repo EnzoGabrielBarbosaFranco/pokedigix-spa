@@ -142,22 +142,4 @@ export default {
             <button @click="voltar" class="btn btn-primary">Voltar</button>
         </div>
     </div>
-
-    <div class="modal-dialog modal-dialog-centered" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Apagar ataque</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Você está prestes a apagar um ataque, tem certeza que deseja fazer isso?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Apagar Ataque</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </template>
