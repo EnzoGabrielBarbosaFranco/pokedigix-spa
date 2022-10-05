@@ -22,7 +22,7 @@ class AtaqueDataService {
     }
 
     async remover(id) {
-        await http.delete('/ataques/' + id, ataque);
+        await http.delete('/ataques/' + id);
     }
 }
 

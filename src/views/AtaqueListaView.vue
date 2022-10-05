@@ -1,51 +1,77 @@
 <script>
 import AtaqueDataService from '../services/AtaqueDataService';
-
+import Loading from "vue-loading-overlay";
 export default {
     name: "ataques-lista",
     data() {
-        return { ataques: [] };
+        return { 
+            ataques: [],
+            ataqueSelecionado: this.inicializaAtaque(),
+            isLoading: false,
+            fullPage: false,
+        };
+    },
+    components: {
+        Loading,
     },
     methods: {
         buscarAtaques() {
+            this.isLoading = true;
             AtaqueDataService.buscarTodos()
-                .then(resposta => {
-                    this.ataques = resposta
+                .then((resposta) => {
+                    this.ataques = resposta;
+                    this.isLoading = false
                 })
                 .catch(erro => {
                     console.log(erro);
+                    this.isLoading = false
                 });
         },
         editar(id) {
             this.$router.push({ name: 'ataques-edit', params: { id: id } });
         },
-        apagar(id) {
-            AtaqueDataService.remover(id)
-            .then(resposta => {
-                    this.buscarAtaques();
-
-                })
-                .catch(erro => {
-                    console.log(erro);
-                });
+        selecionar(ataque) {
+            this.ataqueSelecionado.id = ataque.id
+            this.ataqueSelecionado.nome = ataque.nome
+        },
+        inicializaAtaque() {
+            return {
+                id: null,
+                nome: null
+            }
+        },
+        removerAtaqueSelecionado() {
+            this.isLoading = true;
+            AtaqueDataService.remover(this.ataqueSelecionado.id)
+            .then(() =>{
+                this.ataques = this.ataques.filter(ataque => ataque.id != this.ataqueSelecionado.id);
+                this.inicializaAtaque();
+                this.isLoading = false;
+            })
+            .catch(() => {
+                this.inicializaAtaque();
+                this.isLoading = false;
+            });
         }
     },
     mounted() {
         this.buscarAtaques();
     },
 };
-</script>
-    
+</script>  
 <template>
     <main>
-
-        <div>
+        <div class="row">
             <h2 class=" mb-4 mt-4 text-center">Lista de Ataques:</h2>
-            <div class="container">
+            <div class="table-responsive">
+                <loading
+                v-model:active="isLoading"
+                :is-full-page="fullPage"
+                :loader="'dots'"/>
                 <table class="table table-light">
                     <thead>
                         <tr>
-                            <th scope="col" class="text-center">Id:</th>
+                            <th scope="col" class="text-center">id:</th>
                             <th scope="col" class="text-center">Nome do Ataque:</th>
                             <th scope="col" class="text-center">Tipo:</th>
                             <th scope="col" class="text-center">Categoria:</th>
@@ -59,7 +85,7 @@ export default {
                     <tbody>
                         <tr v-for="ataque in ataques" :key="ataque.id">
                             <th scope="row" class="text-center">{{ataque.id}}</th>
-                            <td class="text-center">{{ataque.nome}}</td>
+                            <td id="nomeDoAtaque" class="text-center">{{ataque.nome}}</td>
                             <td class="text-center">{{ataque.tipo.nome}}</td>
                             <td class="text-center">{{ataque.categoria}}</td>
                             <td class="text-center">{{ataque.forca}}</td>
@@ -76,39 +102,39 @@ export default {
                                     </svg> </button>
                             </td>
                             <td class="text-center">
-                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal" data-bs-whatever="@mdo"
-                                    ><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                <button type="button" @click="selecionar(ataque)" class="btn btn-outline-danger"
+                                    data-bs-toggle="modal" data-bs-target="#confirmacaoExclusao" 
+                                    data-bs-whatever="@mdo"><svg xmlns="http://www.w3.org/2000/svg" width="16"
                                         height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                         <path
                                             d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
                                         <path fill-rule="evenodd"
                                             d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
                                     </svg></button>
-
-                                <div class="modal fade" id="exampleModal" tabindex="-1"
-                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">VOCÊ ESTÁ APAGANDO UM ATAQUE</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Você está apagando um ataque!! Ainda quer continuar??
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" @click="apagar(ataque.id)">Apagar Ataque</button>
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div class="modal fade" id="confirmacaoExclusao" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">VOCÊ ESTÁ APAGANDO UM
+                            ATAQUE!!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Você está apagando o ataque "<strong> {{ataqueSelecionado.nome}} </strong>". Deseja continuar?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" @click="removerAtaqueSelecionado"
+                            data-bs-dismiss="modal">Continuar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

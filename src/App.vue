@@ -8,9 +8,4 @@ import CabecalhoVue from './components/Cabecalho.vue';
   <main class="container container-lista">
       <RouterView />
   </main>
-
 </template>
-
-<style>
-
-</style>

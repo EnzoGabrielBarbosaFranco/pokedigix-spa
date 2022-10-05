@@ -76,6 +76,7 @@ export default {
 
 <template>
     <div v-if="!salvo">
+        <h4 class="mt-4 mb-2 text-center"> Cadastro de Ataques:</h4>
         <form class="row g-3">
             <div class="col-12">
                 <label for="nome" class="form-label">Nome do Ataque:</label>

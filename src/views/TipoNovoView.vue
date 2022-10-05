@@ -27,17 +27,21 @@ export default {
         novo() {
             this.tipo = new Tipo();
             this.salvo = false;
-        }
-    }
+        },
+        voltar() {
+            this.$router.push({ name: "tipos-lista" });
+        },
+    },
 }
 
 </script>
 
 <template>
     <div v-if="!salvo">
+        <h4 class="mt-4 mb-2 text-center"> Cadastro de Tipos:</h4>
         <form>
             <div class="mb-3">
-                <label for="nome" class="form-label">Nome do Tipo</label>
+                <label for="nome" class="form-label">Nome do Tipo:</label>
                 <input type="text" required class="form-control" v-model="tipo.nome" id="nome">
             </div>
             <button @click.prevent="salvar" class="btn btn-success">Salvar</button>
@@ -45,8 +49,8 @@ export default {
     </div>
     <div v-else>
         <div class="row">
-            <h4>Salvo com Sucesso!</h4>
-            <span> O id do tipo cadastrado é: {{tipo.id}} </span>
+            <h4>Cadastrado com Sucesso!</h4>
+            <span> O id do Tipo cadastrado é: <strong> {{tipo.id}} </strong>. </span>
             <button @click="novo" class="btn btn-primary">Cadastrar Novo Tipo</button>
         </div>
     </div>
