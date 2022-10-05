@@ -127,7 +127,7 @@ export default {
                 <label for="descricao" class="form-label">Descrição:</label>
                 <textarea class="form-control" id="descricao" rows="1" v-model="ataqueRequest.descricao"></textarea>
             </div>
-            <button @click.prevent="salvar" class="btn btn-success">Salvar</button>
+            <button @click.prevent="salvar" class="btn btn-success mb-2">Salvar</button>
         </form>
     </div>
     <div v-else>

@@ -40,11 +40,11 @@ export default {
     <div v-if="!salvo">
         <h4 class="mt-4 mb-2 text-center"> Cadastro de Tipos:</h4>
         <form>
-            <div class="mb-3">
+            <div class="mb-4">
                 <label for="nome" class="form-label">Nome do Tipo:</label>
                 <input type="text" required class="form-control" v-model="tipo.nome" id="nome">
             </div>
-            <button @click.prevent="salvar" class="btn btn-success">Salvar</button>
+            <button @click.prevent="salvar" class="btn btn-success col-12 mb-2">Salvar</button>
         </form>
     </div>
     <div v-else>

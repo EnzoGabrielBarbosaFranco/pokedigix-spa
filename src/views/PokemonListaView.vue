@@ -40,7 +40,7 @@ export default {
     selecionar(pokemon) {
       this.pokemonSelecionado.id = pokemon.id;
       this.pokemonSelecionado.nome = pokemon.nome;
-     },
+    },
     // editar(id) {
     //   this.$router.push({ name: 'pokemon-edit', params: {id: id}});
     // }
@@ -81,8 +81,8 @@ export default {
               <div class="col-md-9">
                 <div class="card-body">
                   <p class="card-text">
-                  <div v-for="tipo in pokemon.tipos" :key="tipo.id" class="col-6">
-                    <div class="row">
+                  <div class="row">
+                    <div v-for="tipo in pokemon.tipos" :key="tipo.id" class="col-4">
                       <div class="card">
                         <div class="card-body text-center p-1">
                           {{tipo.nome}}
@@ -108,7 +108,7 @@ export default {
 
                   <div class="collapse" :id="'collapseExample' + pokemon.id">
                     <div class="card card-body">
-                      <p class="card-text">Pokédex: {{ pokemon.numeroPokedex }}</p>
+                      <p class="card-text">Pokédex: {{ pokemon.numeroPokedex }}º</p>
                       <p class="card-text">Peso: {{ pokemon.peso }} kg</p>
                       <p class="card-text">Altura: {{ pokemon.altura }} m</p>
                       <p class="card-text">Felicidade: {{ pokemon.felicidade }}</p>
