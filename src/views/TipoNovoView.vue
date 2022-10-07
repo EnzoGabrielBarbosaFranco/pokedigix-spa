@@ -1,5 +1,4 @@
 <script>
-
 import TipoDataService from '../services/TipoDataService';
 import Tipo from '../models/Tipo'
 export default {
@@ -33,9 +32,7 @@ export default {
         },
     },
 }
-
 </script>
-
 <template>
     <div v-if="!salvo">
         <h4 class="mt-4 mb-2 text-center"> Cadastro de Tipos:</h4>

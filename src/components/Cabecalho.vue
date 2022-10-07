@@ -63,6 +63,20 @@ import { RouterLink } from 'vue-router';
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Treinadores
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <RouterLink class="dropdown-item" to="/treinador/novo">Novo</RouterLink>
+                                </li>
+                                <li>
+                                    <RouterLink class="dropdown-item" to="/treinador/lista">Lista</RouterLink>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                     <form class="d-flex" role="search">
                         <input class="form-control me-1" type="search" placeholder="Pesquisar" aria-label="Search">

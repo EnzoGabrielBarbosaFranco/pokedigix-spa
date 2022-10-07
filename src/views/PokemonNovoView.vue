@@ -28,6 +28,8 @@ export default {
                     nomeBanco: "INDEFINIDO"
                 }
             ],
+            ataquesSelecionados: [],
+            ataqueSelecionado: {}
         }
     },
     methods: {
@@ -40,13 +42,22 @@ export default {
                     console.log(erro);
                 });
         },
-        selecionarTipo(id) {
+        carregarAtaques() {
+            AtaqueDataService.buscarTodos()
+                .then(resposta => {
+                    this.ataques = resposta;
+                })
+                .catch(erro => {
+                    console.log(erro);
+                })
+        },
+        removerAtaque(indice) {
+            this.ataquesSelecionados.splice(indice, 1);
         },
         salvar() {
             const listaFiltrada = this.pokemonRequest.tiposIds.filter(tipo => tipo != "");
             this.pokemonRequest.tiposIds = [... new Set(listaFiltrada)]
-            const listaFiltradaAtaques = this.pokemonRequest.ataquesIds.filter(ataque => ataque != "");
-            this.pokemonRequest.ataquesIds = [... new Set(listaFiltradaAtaques)]
+            this.pokemonRequest.ataquesIds = this.pokemonRequest.ataquesIds.map(ataque => ataque.id);
             PokemonDataService.criar(this.pokemonRequest)
                 .then(() => {
                     this.salvo = true;
@@ -59,17 +70,14 @@ export default {
         novo() {
             this.pokemonRequest = new PokemonRequest();
             this.salvo = false;
-            this.pokemonRequest.genero = this.generos[1].nomeBanco;
         },
-        carregarAtaques() {
-            AtaqueDataService.buscarTodos()
-            .then(resposta => {
-                this.ataques = resposta;
-            })
-            .catch(erro => {
-                console.log(erro);
-            })
-        },
+        selecionarAtaque() {
+            if (this.ataquesSelecionados.length < 4) {
+                this.ataquesSelecionados.push(this.ataqueSelecionado);
+                this.ataquesSelecionados =
+                    [... new Set(this.ataquesSelecionados)];
+            }
+        }
     },
     mounted() {
         this.carregarTipos();
@@ -154,55 +162,56 @@ export default {
             <div class="col-12">
                 <label for="ataque1" class="form-label">Ataque 1:</label>
                 <select id="ataque1" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example"
-                    v-model="pokemonRequest.ataquesIds[0]">
-                    <option value="" selected>Nenhum</option>
-                    <option v-for="ataque in ataques" :key="ataque.id" :value="ataque.id">
-                        {{ataque.nome}} - {{ataque.forca}} - {{ataque.tipo.nome}} - {{ataque.categoria}}
+                    v-model="ataqueSelecionado" @change="selecionarAtaque">
+                    <option v-for="ataque in ataques" :key="ataque.id" :value="ataque">
+                        {{ataque.nome}} - Forca: {{ataque.forca}} - {{ataque.tipo.nome}} - {{ataque.categoria}}
                     </option>
                 </select>
             </div>
-            <div class="col-12">
-                <label for="ataque2" class="form-label">Ataque 2:</label>
-                <select id="ataque2" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example"
-                    v-model="pokemonRequest.ataquesIds[0]">
-                    <option value="" selected>Nenhum</option>
-                    <option v-for="ataque in ataques" :key="ataque.id" :value="ataque.id">
-                        {{ataque.nome}} - {{ataque.forca}} - {{ataque.tipo.nome}} - {{ataque.categoria}}
-                    </option>
-                </select>
-            </div>
-            <div class="col-12">
-                <label for="ataque3" class="form-label">Ataque 3:</label>
-                <select id="ataque3" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example"
-                    v-model="pokemonRequest.ataquesIds[0]">
-                    <option value="" selected>Nenhum</option>
-                    <option v-for="ataque in ataques" :key="ataque.id" :value="ataque.id">
-                        {{ataque.nome}} - {{ataque.forca}} - {{ataque.tipo.nome}} - {{ataque.categoria}}
-                    </option>
-                </select>
-            </div>
-            <div class="col-12">
-                <label for="ataque4" class="form-label">Ataque 4:</label>
-                <select id="ataque4" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example"
-                    v-model="pokemonRequest.ataquesIds[3]">
-                    <option value="" selected>Nenhum</option>
-                    <option v-for="ataque in ataques" :key="ataque.id" :value="ataque.id">
-                        {{ataque.nome}} - {{ataque.forca}} - {{ataque.tipo.nome}} - {{ataque.categoria}}
-                    </option>
-                </select>
+            <div class="row">
+                <div class="col-3 mb-3" v-for="(ataque, indice) in ataquesSelecionados" :key="ataque.id">
+                    <div class="card h-100" style="min-width: 10rem">
+                        <div class="card-header">
+                            <div class="container">
+                                <div class="row align-items-center">
+                                    <div class="col-9">
+                                        {{ataque.nome}}
+                                    </div>
+                                    <div class="col-3">
+                                        <button class="btn" @click.prevent="removerAtaque(indice)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Tipo: {{ataque.tipo.nome}}</p>
+                            <p class="card-text">Forca: {{ataque.forca}}</p>
+                            <p class="card-text">Acuracia: {{ataque.acuracia}}</p>
+                            <p class="card-text">PP: {{ataque.pontosDePoder}}</p>
+                            <p class="card-text">Categoria: {{ataque.categoria}}</p>
+                            <p class="card-text">Descrição: {{ataque.descricao}}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <button @click.prevent="salvar" class="btn btn-success text-center col-12 mb-2">Salvar</button>
         </form>
     </div>
     <div v-else>
         <div>
-                <div class="alert alert-success mt-3" role="alert"><svg xmlns="http://www.w3.org/2000/svg" width="26"
-                        height="26" fill="currentColor" class="bi bi-patch-check" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                            d="M10.354 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                        <path
-                            d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911l-1.318.016z" />
-                    </svg>
+            <div class="alert alert-success mt-3" role="alert"><svg xmlns="http://www.w3.org/2000/svg" width="26"
+                    height="26" fill="currentColor" class="bi bi-patch-check" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M10.354 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                    <path
+                        d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911l-1.318.016z" />
+                </svg>
                 O Pokémon <strong>{{pokemonRequest.nome}}</strong> foi salvo com sucesso!!
             </div>
         </div>
