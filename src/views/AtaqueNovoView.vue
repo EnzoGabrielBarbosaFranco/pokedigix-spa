@@ -3,6 +3,7 @@ import AtaqueDataService from '../services/AtaqueDataService';
 import AtaqueRequest from '../models/AtaqueRequest';
 import AtaqueResponse from '../models/AtaqueResponse';
 import TipoDataService from '../services/TipoDataService';
+import MensagemSucessoVue from '../components/MensagemSucesso.vue';
 export default {
     name: 'ataques-novo',
     data() {
@@ -30,6 +31,9 @@ export default {
             tipos: [],
             desabilitarForca: false
         }
+    },
+    components: {
+        MensagemSucessoVue
     },
     methods: {
         carregarTipos() {
@@ -123,18 +127,17 @@ export default {
                     </option>
                 </select>
             </div>
-            <div class="col-12">
-                <label for="descricao" class="form-label">Descrição:</label>
-                <textarea class="form-control" id="descricao" rows="1" v-model="ataqueRequest.descricao"></textarea>
+            <div class="input-group row-12">
+                <span class="input-group-text">Descrição do Ataque:</span>
+                <textarea class="form-control" aria-label="With textarea" id="descricao"
+                    v-model="ataqueRequest.descricao"></textarea>
             </div>
             <button @click.prevent="salvar" class="btn btn-success mb-2">Salvar</button>
         </form>
     </div>
     <div v-else>
-        <div class="row">
-            <h4>Salvo com Sucesso!</h4>
-            <span> O id do ataque cadastrado é: {{ataqueResponse.id}} </span>
-            <button @click="novo" class="btn btn-primary">Cadastrar novo ataque</button>
-        </div>
+        <MensagemSucessoVue @cadastro="novo" urlListagem="ataques-lista">
+            <span>Ataque id: {{ataqueResponse.id}} foi salvo</span>
+        </MensagemSucessoVue>
     </div>
 </template>
