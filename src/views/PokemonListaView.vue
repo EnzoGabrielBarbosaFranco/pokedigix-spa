@@ -1,23 +1,68 @@
-
-<script >
+<script>
+import PokemonDataService from "../services/PokemonDataService";
 import PokemonRequest from '../models/PokemonRequest';
-import PokemonDataService from '../services/PokemonDataService';
+import Ordenacao from '../components/Ordenacao.vue';
+import Paginacao from '../components/Paginacao.vue';
 export default {
-  name: "pokemons-lista",
+  name: "lista-pokemons",
   data() {
     return {
       pokemons: [],
-      pokemonSelecionado: this.inicializaPokemon()
+      pokemonSelecionado: this.inicializaPokemon(),
+      pagina: 1,
+      tamanho: 4,
+      ordenacao: {
+        titulo: "",
+        direcao: "",
+        campo: ""
+      },
+      url: '#',
+      pageParam: 'page',
+      total: 10,
+      quantidade: 3,
+      opcoes: [{
+        titulo: "Nome: Crescente",
+        direcao: "ASC",
+        campo: "nome"
+      },
+      {
+        titulo: "Nome: Decrescente",
+        direcao: "DESC",
+        campo: "nome"
+      },
+      {
+        titulo: "Numero: Crescente",
+        direcao: "ASC",
+        campo: "numeroPokedex"
+      },
+      {
+        titulo: "Nivel: Decrescente",
+        direcao: "DESC",
+        campo: "nivel"
+      }],
+      termo: ""
     };
   },
+  components: {
+    Ordenacao,
+    Paginacao
+  },
   methods: {
+    filtarPeloDigitada() {
+      if (this.termo.length > 3) {
+        this.buscarPokemons();
+      }
+    },
+    trocarPagina(p) {
+      this.pagina = p;
+      this.buscarPokemons()
+    },
     buscarPokemons() {
-      PokemonDataService.buscarTodos()
-        .then(resposta => {
+      PokemonDataService.buscarTodosPaginadoOrdenado(this.pagina - 1, this.tamanho, this.ordenacao.campo, this.ordenacao.direcao, this.termo)
+        .then((resposta) => {
           this.pokemons = resposta;
-          console.log(this.pokemons);
         })
-        .catch(erro => {
+        .catch((erro) => {
           console.log(erro);
         });
     },
@@ -31,41 +76,54 @@ export default {
           this.inicializaPokemon();
         });
     },
+    selecionar(pokemon) {
+      this.pokemonSelecionado.id = pokemon.id;
+      this.pokemonSelecionado.nome = pokemon.nome;
+    },
     inicializaPokemon() {
       return {
         "id": null,
         "nome": null
       }
     },
-    selecionar(pokemon) {
-      this.pokemonSelecionado.id = pokemon.id;
-      this.pokemonSelecionado.nome = pokemon.nome;
-    },
-    // editar(id) {
-    //   this.$router.push({ name: 'pokemon-edit', params: {id: id}});
-    // }
-
   },
   mounted() {
     this.buscarPokemons();
-  }
-}
+    this.ordenacao = this.opcoes[0];
+  },
+};
 </script>
+
 <template>
   <main>
     <div>
-      <h2 class="text-center mb-4 mt-4">Lista de Pokémons:</h2>
-      <div class="row">
+      <h2 class="text-center mb-4 mt-4">Lista de Pokémon:</h2>
+      <div class="row justify-content-end">
+        <div class="col-2">
+          <Ordenacao v-model="ordenacao" @ordenar="buscarPokemons" :ordenacao="ordenacao" :opcoes="opcoes" />
+        </div>
+        <div class="col-4">
+          <form class="d-flex" role="search">
+            <input class="form-control me-2" v-model="termo" type="search" placeholder="Procurar" aria-label="Search">
+            <button class="btn btn-success" type="button" @click.prevent="buscarPokemons"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                            </svg></button>
+          </form>
+        </div>
+      </div>
+      <div class="row mt-2">
         <div class="col-6" v-for="pokemon in pokemons" :key="pokemon.id">
           <div class="card mb-3">
             <div class="card-header">
               <div class="row">
-                <div class="col-sm-8">
-                  <p class="card-text">
+                <div class="col-sm-6">
+                  <p class="card-text text-start">
                     <strong>{{ pokemon.nome }}</strong>
                   </p>
                 </div>
-                <div class="col-sm-4 text-end">
+                <div class="col-sm-6 text-end">
                   <p class="card-text">Lv. {{ pokemon.nivel }}</p>
                 </div>
               </div>
@@ -105,19 +163,18 @@ export default {
                     </svg>
                   </p>
                   <p class="card-text">Número Pokédex: {{ pokemon.numeroPokedex }}</p>
-
                   <div class="collapse" :id="'collapseExample' + pokemon.id">
                     <div class="card card-body">
-                      <p class="card-text">Pokédex: {{ pokemon.numeroPokedex }}º</p>
+                      <p class="card-text">Pokedex: {{ pokemon.numeroPokedex }} º</p>
                       <p class="card-text">Peso: {{ pokemon.peso }} kg</p>
                       <p class="card-text">Altura: {{ pokemon.altura }} m</p>
                       <p class="card-text">Felicidade: {{ pokemon.felicidade }}</p>
                     </div>
                   </div>
                   <div class="text-center">
-                    <button type="button" class="btn btn-outline-primary pt-1 m-1 " data-bs-toggle="collapse"
-                      :data-bs-target="'#collapseExample' + pokemon.id">
-                      Detalhes
+                    <button type="button" data-bs-toggle="collapse" class="btn btn-outline-primary pt-1 m-1"
+                      :href="'#collapseExample' + pokemon.id">
+                      Mais
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-plus-lg" viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
@@ -133,14 +190,6 @@ export default {
                           d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                       </svg>
                     </button>
-                    <!-- <button id="btn-editar" type="button" class="btn btn-outline-secondary m-1"
-                      @click="editar(pokemon.id)"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                        fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                        <path
-                          d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                        <path fill-rule="evenodd"
-                          d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                      </svg> </button> -->
                     <button type="button" @click="selecionar(pokemon)" class="btn btn-outline-danger m-1"
                       data-bs-toggle="modal" data-bs-target="#confirmacaoExclusaoPokemon" data-bs-whatever="@mdo"><svg
                         xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -156,15 +205,14 @@ export default {
             </div>
           </div>
         </div>
+        <Paginacao :total="total" :quantidade="quantidade" v-model="pagina" :atual="pagina"
+          :trocarPagina="trocarPagina"></Paginacao>
       </div>
-      <button type="button" class="btn btn-primary pt-1 m-1">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg"
-          viewBox="0 0 16 16">
-          <path fill-rule="evenodd"
-            d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
-        </svg>
-        Novo Pokémon
-      </button>
+      <div class="row">
+        <div class="col-1">
+          <button @click="novo" class="btn btn-primary">Novo</button>
+        </div>
+      </div>
     </div>
     <div class="modal fade" id="confirmacaoExclusaoPokemon" tabindex="-1" aria-labelledby="exampleModalLabel"
       aria-hidden="true">

@@ -209,8 +209,8 @@ export default {
     </div>
     <div v-else>
         <div>
-            <div class="alert alert-success mt-3" role="alert"><svg xmlns="http://www.w3.org/2000/svg" width="26"
-                    height="26" fill="currentColor" class="bi bi-patch-check" viewBox="0 0 16 16">
+            <div class="alert alert-success mt-3" role="alert"><svg xmlns="http://www.w3.org/2000/svg" width="40"
+                    height="40" fill="currentColor" class="bi bi-patch-check" viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
                         d="M10.354 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
                     <path
@@ -221,6 +221,5 @@ export default {
                 </MensagemSucessoVue>
             </div>
         </div>
-        <button @click.prevent="novo" class="btn btn-primary text-center"> Cadastrar novo Pokémon</button>
     </div>
 </template>
