@@ -61,7 +61,7 @@ export default {
         salvar() {
             const listaFiltrada = this.pokemonRequest.tiposIds.filter(tipo => tipo != "");
             this.pokemonRequest.tiposIds = [... new Set(listaFiltrada)]
-            this.pokemonRequest.ataquesIds = this.pokemonRequest.ataquesIds.map(ataque => ataque.id);
+            this.pokemonRequest.ataquesIds = this.ataquesSelecionados.map(ataque => ataque.id);
             PokemonDataService.criar(this.pokemonRequest)
                 .then(() => {
                     this.salvo = true;
@@ -164,11 +164,11 @@ export default {
                 </select>
             </div>
             <div class="col-12">
-                <label for="ataque1" class="form-label">Ataque 1:</label>
+                <label for="ataque1" class="form-label">Ataque:</label>
                 <select id="ataque1" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example"
                     v-model="ataqueSelecionado" @change="selecionarAtaque">
                     <option v-for="ataque in ataques" :key="ataque.id" :value="ataque">
-                        {{ataque.nome}} - Forca: {{ataque.forca}} - {{ataque.tipo.nome}} - {{ataque.categoria}}
+                        {{ataque.nome}} - Forca: {{ataque.forca}} - {{ataque.tipo.nome}} - {{ataque.categoria}} - {{ataque.descricao}}
                     </option>
                 </select>
             </div>
@@ -195,9 +195,9 @@ export default {
                         </div>
                         <div class="card-body">
                             <p class="card-text">Tipo: {{ataque.tipo.nome}}</p>
-                            <p class="card-text">Forca: {{ataque.forca}}</p>
-                            <p class="card-text">Acuracia: {{ataque.acuracia}}</p>
-                            <p class="card-text">PP: {{ataque.pontosDePoder}}</p>
+                            <p class="card-text">Força: {{ataque.forca}}</p>
+                            <p class="card-text">Acurácia: {{ataque.acuracia}}</p>
+                            <p class="card-text">Pontos de Poder: {{ataque.pontosDePoder}}</p>
                             <p class="card-text">Categoria: {{ataque.categoria}}</p>
                             <p class="card-text">Descrição: {{ataque.descricao}}</p>
                         </div>

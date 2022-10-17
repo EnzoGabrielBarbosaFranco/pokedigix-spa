@@ -1,8 +1,8 @@
 <script>
 import PokemonDataService from "../services/PokemonDataService";
-import PokemonRequest from '../models/PokemonRequest';
 import Ordenacao from '../components/Ordenacao.vue';
 import Paginacao from '../components/Paginacao.vue';
+import { Popover } from 'bootstrap/dist/js/bootstrap.esm.min.js'
 export default {
   name: "lista-pokemons",
   data() {
@@ -18,12 +18,12 @@ export default {
       },
       url: '#',
       pageParam: 'page',
-      total: 10,
+      totalPaginas: 10,
       quantidade: 3,
       opcoes: [{
         titulo: "Nome: Crescente",
-        direcao: "ASC",
-        campo: "nome"
+        direcao: "DESC",
+        campo: "nivel"
       },
       {
         titulo: "Nome: Decrescente",
@@ -45,7 +45,7 @@ export default {
   },
   components: {
     Ordenacao,
-    Paginacao
+    Paginacao,
   },
   methods: {
     filtarPeloDigitada() {
@@ -60,7 +60,9 @@ export default {
     buscarPokemons() {
       PokemonDataService.buscarTodosPaginadoOrdenado(this.pagina - 1, this.tamanho, this.ordenacao.campo, this.ordenacao.direcao, this.termo)
         .then((resposta) => {
-          this.pokemons = resposta;
+          this.pokemons = resposta.pokemons;
+          this.totalPaginas = resposta.totalPaginas;
+
         })
         .catch((erro) => {
           console.log(erro);
@@ -76,9 +78,15 @@ export default {
           this.inicializaPokemon();
         });
     },
+    popover() {
+      Array.from(document.querySelectorAll('[data-bs-toggle="popover"]')).forEach(popoverNode => new Popover(popoverNode));
+    },
     selecionar(pokemon) {
       this.pokemonSelecionado.id = pokemon.id;
       this.pokemonSelecionado.nome = pokemon.nome;
+    },
+    novo() {
+      this.$router.push({ name: 'pokemons-novo' });
     },
     inicializaPokemon() {
       return {
@@ -88,8 +96,9 @@ export default {
     },
   },
   mounted() {
+    this.ordenacao = this.opcoes[2];
     this.buscarPokemons();
-    this.ordenacao = this.opcoes[0];
+    Array.from(document.querySelectorAll('[data-bs-toggle="popover"]')).forEach(popoverNode => new Popover(popoverNode));
   },
 };
 </script>
@@ -105,11 +114,12 @@ export default {
         <div class="col-4">
           <form class="d-flex" role="search">
             <input class="form-control me-2" v-model="termo" type="search" placeholder="Procurar" aria-label="Search">
-            <button class="btn btn-success" type="button" @click.prevent="buscarPokemons"><svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                <path
-                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                            </svg></button>
+            <button class="btn btn-success" type="button" @click.prevent="buscarPokemons"><svg
+                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+                viewBox="0 0 16 16">
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg></button>
           </form>
         </div>
       </div>
@@ -141,7 +151,7 @@ export default {
                   <p class="card-text">
                   <div class="row">
                     <div v-for="tipo in pokemon.tipos" :key="tipo.id" class="col-4">
-                      <div class="card">
+                      <div class="card rounded-4">
                         <div class="card-body text-center p-1">
                           {{tipo.nome}}
                         </div>
@@ -162,18 +172,28 @@ export default {
                         d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2H9.5zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />
                     </svg>
                   </p>
-                  <p class="card-text">Número Pokédex: {{ pokemon.numeroPokedex }}</p>
+                  <p class="card-text">Número PokéDex: {{ pokemon.numeroPokedex }}</p>
                   <div class="collapse" :id="'collapseExample' + pokemon.id">
                     <div class="card card-body">
-                      <p class="card-text">Pokedex: {{ pokemon.numeroPokedex }} º</p>
+                      <p class="card-text">PokéDex: {{ pokemon.numeroPokedex }} º</p>
                       <p class="card-text">Peso: {{ pokemon.peso }} kg</p>
                       <p class="card-text">Altura: {{ pokemon.altura }} m</p>
                       <p class="card-text">Felicidade: {{ pokemon.felicidade }}</p>
+                      <p v-for="ataque in pokemon.ataques" class="card-text" :key="ataque.id">Ataque: {{ ataque.nome }}
+                        <button type="button" class="btn btn-outline-secondary rounded-5" data-bs-toggle="popover"
+                          :data-bs-title="ataque.tipo.nome" :data-bs-content="ataque.descricao"><svg
+                            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-question-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                            <path
+                              d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" />
+                          </svg></button>
+                      </p>
                     </div>
                   </div>
                   <div class="text-center">
                     <button type="button" data-bs-toggle="collapse" class="btn btn-outline-primary pt-1 m-1"
-                      :href="'#collapseExample' + pokemon.id">
+                      :href="'#collapseExample' + pokemon.id" @click="popover">
                       Mais
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-plus-lg" viewBox="0 0 16 16">
@@ -205,7 +225,7 @@ export default {
             </div>
           </div>
         </div>
-        <Paginacao :total="total" :quantidade="quantidade" v-model="pagina" :atual="pagina"
+        <Paginacao :totalPaginas="totalPaginas" :quantidadeItens="quantidade" v-model="pagina" :atual="pagina"
           :trocarPagina="trocarPagina"></Paginacao>
       </div>
       <div class="row">
