@@ -1,10 +1,4 @@
 <script>
-/**
- * quantidadeItens: quantidade de páginas que podem aparecer no layout
- * totalPaginas: total de páginas
- * atual: página atual
- * trocarPagina: função que gerencia o clique na página
-**/
 export default {
     name: 'paginacao',
     props: {
