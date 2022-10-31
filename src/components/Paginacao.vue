@@ -1,8 +1,14 @@
 <script>
+/**
+ * quantidade: quantidade de páginas que podem aparecer no layout
+ * totalPaginas: total de páginas
+ * atual: página atual
+ * trocarPagina: função que gerencia o clique na página
+**/
 export default {
     name: 'paginacao',
     props: {
-      quantidadeItens: {
+      quantidade: {
         type: Number,
         default: 4
       },
@@ -25,18 +31,18 @@ export default {
         return current > this.totalPaginas ? this.totalPaginas : current
       },
       inicio(){
-        let inicio = this.current - this.current % this.quantidadeItens
-        if(this.current % this.quantidadeItens == 0){
-          inicio = this.current - this.quantidadeItens
+        let inicio = this.current - this.current % this.quantidade
+        if(this.current % this.quantidade == 0){
+          inicio = this.current - this.quantidade
         }
-        if(this.current > this.quantidadeItens){
+        if(this.current > this.quantidade){
           inicio = inicio + 1
         }
         return Math.max(1, inicio)
       },
       fim(){
-          let fim = this.inicio + this.quantidadeItens - 1
-          if(this.current % this.quantidadeItens == 0){
+          let fim = this.inicio + this.quantidade - 1
+          if(this.current % this.quantidade == 0){
               fim = this.current
             }
             fim = fim > this.totalPaginas ? this.totalPaginas : fim
@@ -56,7 +62,7 @@ export default {
 <template>
 <nav>
     <ul class="pagination justify-content-center">
-      <li v-if="inicio > quantidadeItens" class="page-item">
+      <li v-if="inicio > quantidade" class="page-item">
         <a href="#" @click="trocarPagina(atual-1)" aria-label="Anterior" class="page-link"><span aria-hidden="true">&laquo;</span></a>
       </li>
       <li v-if="contadorDePaginas.length" v-for="p in contadorDePaginas" :class="p == atual ? 'active' : ''" class="page-item">

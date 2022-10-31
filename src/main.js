@@ -5,7 +5,6 @@ import 'vue-loading-overlay/dist/vue-loading.css';
 
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap/dist/js/bootstrap.min.js'
 
 const app = createApp(App)
 

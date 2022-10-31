@@ -49,7 +49,7 @@ export default {
         carregarAtaques() {
             AtaqueDataService.buscarTodos()
                 .then(resposta => {
-                    this.ataques = resposta;
+                    this.ataques = resposta.ataques;
                 })
                 .catch(erro => {
                     console.log(erro);

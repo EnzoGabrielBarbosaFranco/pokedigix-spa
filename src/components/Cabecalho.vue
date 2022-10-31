@@ -1,5 +1,19 @@
-<script setup>
+<script>
 import { RouterLink } from 'vue-router';
+import { useCookies } from "vue3-cookies"
+const { cookies } = useCookies();
+
+export default {
+    data() {
+        return {
+            nomeTreinador: ""
+        }
+    },
+    mounted() {
+        this.nomeTreinador = cookies.get('treinador_nome');
+    }
+
+}
 </script>
 
 <template>
@@ -77,6 +91,27 @@ import { RouterLink } from 'vue-router';
                                 </li>
                             </ul>
                         </li>
+                        <div class="d-flex">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle active" href="#" role="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false"> <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            fill="currentColor" class="bi bi-person-fill mb-1" viewBox="0 0 16 16">
+                                            <path
+                                                d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                        </svg>
+                                        {{nomeTreinador}}
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <RouterLink class="dropdown-item" to="/treinador/lista">Trocar o treinador
+                                            </RouterLink>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </ul>
                 </div>
             </div>
