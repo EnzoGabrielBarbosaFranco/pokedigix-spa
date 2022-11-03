@@ -4,6 +4,9 @@ import AtaqueRequest from '../models/AtaqueRequest';
 import AtaqueResponse from '../models/AtaqueResponse';
 import TipoDataService from '../services/TipoDataService';
 import MensagemSucessoVue from '../components/MensagemSucesso.vue';
+import MensagemErroVue from '../components/MensagemErro.vue';
+import { Toast } from 'bootstrap';
+import MensagemErroDTO from '../models/MensagemErroDTO';
 export default {
     name: 'ataques-novo',
     data() {
@@ -29,11 +32,13 @@ export default {
                 }
             ],
             tipos: [],
-            desabilitarForca: false
+            desabilitarForca: false,
+            mensagemErroDTO: new MensagemErroDTO()
         }
     },
     components: {
-        MensagemSucessoVue
+        MensagemSucessoVue,
+        MensagemErroVue
     },
     methods: {
         carregarTipos() {
@@ -54,6 +59,13 @@ export default {
                 })
                 .catch(erro => {
                     console.log(erro);
+                    this.mensagemErroDTO.mensagemDeErro = erro.response.data.errors[0];
+                    this.mensagemErroDTO.tipo = erro.response.data.type;
+                    this.mensagemErroDTO.status = erro.response.data.status;
+                    const toastLiveExample = document.getElementById('liveToast');
+                    const toast = new Toast(toastLiveExample);
+                    toast.show();
+                    this.salvo = false;
                 });
         },
         novo() {
@@ -81,7 +93,7 @@ export default {
 <template>
     <div v-if="!salvo">
         <h4 class="mt-4 mb-2 text-center"> Cadastro de Ataques:</h4>
-        <form class="row g-3">
+        <form class="row g-3" @submit.prevent="salvar">
             <div class="col-12">
                 <label for="nome" class="form-label">Nome do Ataque:</label>
 
@@ -90,17 +102,24 @@ export default {
 
 
             <div class="col-6">
-                <label for="forca" class="form-label">Força:</label>
-
-                <input type="text" required :disabled="desabilitarForca" class="form-control"
-                    v-model="ataqueRequest.forca" id="forca">
+                <label for="forca" class="form-label">Forca</label>
+                <div class="has-validation">
+                    <input type="text" required :disabled="desabilitarForca" class="form-control"
+                        v-model="ataqueRequest.forca" id="forca">
+                    <div v-if="this.mensagemErroDTO.tipo == 'ForcaInvalidaParaCategoriaException'"
+                        class="invalid-feedback">
+                        {{ mensagemErroDTO.mensagemDeErro }}
+                    </div>
+                </div>
             </div>
-
-
             <div class="col-6">
-                <label for="acuracia" class="form-label">Acurácia:</label>
-
-                <input type="text" required class="form-control" v-model="ataqueRequest.acuracia" id="acuracia">
+                <label for="acuracia" class="form-label">Acuracia</label>
+                <div class="has-validation">
+                    <input type="text" required class="form-control" v-model="ataqueRequest.acuracia" id="acuracia">
+                    <div v-if="this.mensagemErroDTO.tipo == 'AcuraciaInvalidaException'" class="invalid-feedback">
+                        {{ mensagemErroDTO.mensagemDeErro }}
+                    </div>
+                </div>
             </div>
 
             <div class="col-3">
@@ -114,7 +133,7 @@ export default {
                 <select id="categoria" @change="escolherCategoria" class="form-select"
                     v-model="ataqueRequest.categoria">
                     <option v-for="categoria in  categorias" :key="categoria.indice" :value="categoria.nomeBanco">
-                        {{categoria.nome}}
+                        {{ categoria.nome }}
                     </option>
                 </select>
             </div>
@@ -123,7 +142,7 @@ export default {
                 <label for="tipo" class="form-label">Tipo do Ataque:</label>
                 <select id="tipo" class="form-select" v-model="ataqueRequest.tipoId">
                     <option v-for="tipo in tipos" :key="tipo.id" :value="tipo.id">
-                        {{tipo.nome}}
+                        {{ tipo.nome }}
                     </option>
                 </select>
             </div>
@@ -132,8 +151,9 @@ export default {
                 <textarea class="form-control" aria-label="With textarea" id="descricao"
                     v-model="ataqueRequest.descricao"></textarea>
             </div>
-            <button @click.prevent="salvar" class="btn btn-success mb-2">Salvar</button>
+            <button type="submit" class="btn btn-success mb-2">Salvar</button>
         </form>
+        <MensagemErroVue :mensagemErroDTO="mensagemErroDTO"></MensagemErroVue>
     </div>
     <div v-else>
         <div>
@@ -145,7 +165,7 @@ export default {
                         d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911l-1.318.016z" />
                 </svg>
                 <MensagemSucessoVue @cadastro="novo" urlListagem="ataques-lista">
-                    <span>O Ataque <strong>{{ataqueRequest.nome}}</strong> foi salvo com sucesso!</span>
+                    <span>O Ataque <strong>{{ ataqueRequest.nome }}</strong> foi salvo com sucesso!</span>
                 </MensagemSucessoVue>
             </div>
         </div>
