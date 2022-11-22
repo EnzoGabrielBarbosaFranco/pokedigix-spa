@@ -91,6 +91,14 @@ export default {
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <RouterLink class="nav-link" to="/usuarios/novo" role="button" aria-expanded="false">
+                                Cadastro
+                            </RouterLink>
+                        </li>
+                        <li>
+                            <RouterLink class="dropdown-item" to="/usuarios/novo"></RouterLink>
+                        </li>
                         <div class="d-flex">
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li class="nav-item dropdown">
@@ -101,7 +109,7 @@ export default {
                                             <path
                                                 d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
                                         </svg>
-                                        {{nomeTreinador}}
+                                        {{ nomeTreinador }}
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li>
@@ -110,6 +118,12 @@ export default {
                                         </li>
                                     </ul>
                                 </li>
+                                <!-- <li>
+                                    <RouterLink class="nav-link" to="/usuarios/novo" role="button"
+                                        aria-expanded="false">
+                                        Cadastro
+                                    </RouterLink>
+                                </li> -->
                             </ul>
                         </div>
                     </ul>

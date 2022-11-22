@@ -120,7 +120,7 @@ export default {
                         {{ mensagemErroDTO.mensagemDeErro }}
                     </div>
                 </div>
-            </div>
+            </div> 
 
             <div class="col-3">
                 <label for="pp" class="form-label">Pontos de Poder:</label>
