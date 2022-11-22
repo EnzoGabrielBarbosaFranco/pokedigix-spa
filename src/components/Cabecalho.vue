@@ -20,7 +20,7 @@ export default {
     <header>
         <nav class="navbar navbar-dark navbar-expand-lg bg-dark">
             <div class="container-md">
-                <img src='../../public/Poké_Ball_icon.svg.png' width="60" height="60" />
+                <RouterLink to="/"><img src='../../public/Poké_Ball_icon.svg.png' width="60" height="60" /></RouterLink>
                 <a class="navbar-brand" href="#">PokéDigix</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -91,11 +91,6 @@ export default {
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <RouterLink class="nav-link" to="/usuarios/novo" role="button" aria-expanded="false">
-                                Cadastro
-                            </RouterLink>
-                        </li>
                         <li>
                             <RouterLink class="dropdown-item" to="/usuarios/novo"></RouterLink>
                         </li>
@@ -118,12 +113,12 @@ export default {
                                         </li>
                                     </ul>
                                 </li>
-                                <!-- <li>
-                                    <RouterLink class="nav-link" to="/usuarios/novo" role="button"
-                                        aria-expanded="false">
-                                        Cadastro
+                                <li>
+                                    <RouterLink class="nav-link" to="/logins/novo" role="button" aria-expanded="false">
+                                        <button type="button" class="btn btn-secondary btn-sm"
+                                            data-bs-dismiss="modal">Entrar/Cadastrar</button>
                                     </RouterLink>
-                                </li> -->
+                                </li>
                             </ul>
                         </div>
                     </ul>
