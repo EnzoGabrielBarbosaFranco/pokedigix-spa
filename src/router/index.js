@@ -12,6 +12,7 @@ const PokemonNovoView = () => import('@/views/PokemonNovoView.vue');
 const PageNotFound = () => import('@/views/PageNotFound.vue');
 const SignUpView = () => import('@/views/SignUpView.vue');
 const SignInView = () => import('@/views/SignInView.vue');
+const RecoveryView = () => import('@/views/RecoveryView.vue');
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -87,6 +88,12 @@ const router = createRouter({
       path: '/logins/novo',
       name: 'logins-novo',
       component: SignInView
+    }
+    ,
+    {
+      path: '/recuperacoes/novo',
+      name: 'recuperacoes-novo',
+      component: RecoveryView
     }
   ]
 })
